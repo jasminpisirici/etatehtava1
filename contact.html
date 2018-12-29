@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Jasmin Pisirici</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="style.css" type="text/css" media="all" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous"> </head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light"> <a class="navbar-brand" href="home.html">Portfolio</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"> <span class="navbar-toggler-icon"></span> </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active"> <a class="nav-link" href="home.html">Home <span class="sr-only">(current)</span></a> </li>
+                <li class="nav-item"> <a class="nav-link" href="work.html">Work</a> </li>
+                <li class="nav-item dropdown"> <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          About me
+        </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown"> <a class="dropdown-item" href="education.html">Education</a> <a class="dropdown-item" href="workexperience.html">Work Experience</a> </div>
+                </li>
+                <li class="nav-item"> <a class="nav-link" href="contact.html">Contact</a> </li>
+            </ul>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+        </div>
+    </nav>
+    <br>
+    <br>
+    <div id="content">
+        <h1> Contact me<br> <a href="https://www.linkedin.com/in/jasminpisirici" target="_blank"> <img border="0" alt="linkedin" src="in.png" width="35" height="35"></a><br></h1>
+        <p style="text-align: center;"> Anything work, internship or collaboration related please let me know by filling this form! You can also call me +35840123456.</p>
+        <form action=" " method="post" autocomplete="on">
+            <p>
+                <label> First Name <span class="required">*</span></label>
+                <input type="text" id="nimi" required="required" placeholder="First Name here" /> </p>
+            <p>
+                <label> Last Name <span class="required">*</span></label>
+                <input type="text" id="reitti" placeholder="Last Name here" /> </p>
+            <p>
+                <label> E-mail address <span class="required">*</span></label>
+                <input type="email" id="kesto" placeholder="E.g address@gmail.com" required="required" /> </p>
+            <p>
+                <label> Subject </label>
+                <input type="text" id="subject" placeholder="What would you like to talk about?" /> </p>
+            <p>
+                <label> Message <span class="required">*</span></label>
+                <textarea placeholder="Type your message here." id="message" required="required"></textarea>
+            </p>
+            <p class="indication"> All fields with a <span class="required">*</span> are required</p>
+            <center>
+                <button id="submitBtn" onClick="submitClick()">★ Send the mail</button>
+            </center>
+        </form>
+    </div>
+    <h2>Demonstrating that the Firebase works.</h2>
+    <!--tietokannasta haetut viestit-->
+    <div id=viestiketju></div>
+    <!--linkki jquereen-->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js">
+    </script>
+    <script src="https://www.gstatic.com/firebasejs/3.6.9/firebase.js"></script>
+    <script>
+        // Initialize Firebase
+        var config = {
+            apiKey: "AIzaSyCW8NvuHD5rwQFMm6HicHlfXPLG1liWXGE"
+            , authDomain: "portfolio-jasmin.firebaseapp.com"
+            , databaseURL: "https://portfolio-jasmin.firebaseio.com"
+            , projectId: "portfolio-jasmin"
+            , storageBucket: "portfolio-jasmin.appspot.com"
+            , messagingSenderId: "764612715253"
+        };
+        firebase.initializeApp(config);
+    </script>
+    <script>
+        // oma koodi
+        var firebaseRef = firebase.database();
+        var nimi = document.getElementById("nimi");
+        var reitti = document.getElementById("reitti");
+        var kesto = document.getElementById("kesto");
+        var subject = document.getElementById("subject");
+        var message = document.getElementById("message");
+        var d = new Date();
+        var dd = d.getDate();
+        var mm = d.getMonth() + 1; //January is 0!
+        var yyyy = d.getFullYear();
+        var time = d.toLocaleTimeString();
+        if (dd < 10) {
+            dd = '0' + dd
+        }
+        if (mm < 10) {
+            mm = '0' + mm
+        }
+        d = mm + '/' + dd + '/' + yyyy;
+
+        function submitClick() {
+            // tekstin tallennus
+            var firebaseRef = firebase.database().ref();
+            var viestiteksti = nimi.value;
+            var lahettaja = reitti.value;
+            var mansikka = kesto.value;
+            var paaryna = subject.value;
+            var banaani = message.value;
+            var leima = d.value;
+            firebaseRef.child("viestit").push().set({
+                nimi: viestiteksti
+                , reitti: lahettaja
+                , kesto: mansikka
+                , subject: paaryna
+                , message: banaani
+                , leima: d
+            });
+        }
+        // viestien lukeminen tietokannasta ja kirjoittaminen viestiketjuun
+        var rootRef = firebase.database().ref().child('viestit');
+        rootRef.on('child_added', snap => {
+            var nimi = snap.child("nimi").val();
+            var reitti = snap.child("reitti").val();
+            var kesto = snap.child("kesto").val();
+            var subject = snap.child("subject").val();
+            var message = snap.child("message").val();
+            var d = snap.child("leima").val();
+            $("#viestiketju").append("<p>" + nimi + "," + reitti + "," + kesto + "," + subject + "," + message + "," + d + "</p>");
+        });
+    </script>
+    <!--<script>
+        function myFunction() {
+            confirm("Thank you for your Message!");
+        }
+    </script>-->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+
+</html>
